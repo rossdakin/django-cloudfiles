@@ -1,0 +1,29 @@
+django-cloudfiles
+
+Summary
+-------
+
+Mosso, the shared hosting provider owned by Rackspace, offers a new file
+storage service called CloudFiles. Bundled with CloudFiles is the option to
+make your files publicly available over Limelight's CDN. This is very cool!
+
+However, there are some downsides. Currently my biggest gripes are:
+ 1. no control over headers (namely Expires, which is set at 8 hours)
+ 2. no gzip
+ 3. no HTTPS
+ 4. no hierarchies; you can divide content into "containers", but they're only
+    one level deep (a flat hierarchy), which doesn't map well to the typical
+    media/{css,js,img,swf} style organization that most devs seems to follow.
+
+This app will try to provide a solution to gripe #4 by:
+ * allowing you to keep your existing media structure
+ * translating your media structure into unique file names
+   (e.g. media/images/logo.png becomes media_images_logo.png or similar)
+   and uploading it to CloudFiles via their Python API
+ * providing a template tag (or some other facility) for translating your media
+   file names into the CloudFiles file names in templates
+
+Maturity
+--------
+
+Just a thought...
