@@ -26,4 +26,10 @@ This app will try to provide a solution to gripe #4 by:
 Maturity
 --------
 
-Just a thought...
+Working proof of concept.
+
+TODO
+----
+
+some reporting on how long each file took to upload
+object.etag configuration
