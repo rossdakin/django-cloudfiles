@@ -39,6 +39,18 @@ class Command(BaseCommand):
     )
     requires_model_validation = False
 
+    def _set_required_options(self, options, required=REQUIRED_OPTIONS):
+        for option in required:
+            name = option['name']
+            settings_attr = option['settings_attr']
+            if not options.get(name, None):
+                try:
+                    options[name] = getattr(settings, settings_attr)
+                except:
+                    raise CommandError("Missing " + name + ": please specify " +
+                                       "this as a script option, or set " +
+                                       settings_attr + " in your settings file")
+
     def _get_connection(self, username, api_key):
         write("Connecting to CloudFiles: ")
         try:
@@ -75,6 +87,21 @@ class Command(BaseCommand):
                                    "use the --create_container option to let " +
                                    "this script create it for you.")
         return container
+
+    def _get_filenames(self):
+        local_base = '/Users/Jenn/Desktop/test'
+        filenames = (
+            { 'local': local_base + '/smile.jpg',
+              'remote': 'pics/smile.png',
+            },
+            { 'local': local_base + '/frown.jpg',
+              'remote': 'pics/frown.jpg',
+            },
+            { 'local': local_base + '/cat.jpg',
+              'remote': 'pics/cat.jpg',
+            },
+        )
+        return filenames
 
     def _upload_file(self, container, remote_filename, local_filename):
         self.progress_bar = ProgressBar(total_ticks=73)
@@ -120,33 +147,6 @@ class Command(BaseCommand):
         if getattr(settings, PUBLIC_URI_SETTINGS_ATTR, None) != public_uri:
             print ("In your settings.py file, be sure to set:\n  %s = '%s'" %
                    (PUBLIC_URI_SETTINGS_ATTR, public_uri))
-
-    def _set_required_options(self, options, required=REQUIRED_OPTIONS):
-        for option in required:
-            name = option['name']
-            settings_attr = option['settings_attr']
-            if not options.get(name, None):
-                try:
-                    options[name] = getattr(settings, settings_attr)
-                except:
-                    raise CommandError("Missing " + name + ": please specify " +
-                                       "this as a script option, or set " +
-                                       settings_attr + " in your settings file")
-
-    def _get_filenames(self):
-        local_base = '/Users/rdakin/Desktop/pics'
-        filenames = (
-            { 'local': local_base + '/smile.png',
-              'remote': 'pics/smile.png',
-            },
-            { 'local': local_base + '/frown.jpg',
-              'remote': 'pics/frown.jpg',
-            },
-            { 'local': local_base + '/cat.jpg',
-              'remote': 'pics/cat.jpg',
-            },
-        )
-        return filenames
 
     def handle(self, *args, **options):
         try:
