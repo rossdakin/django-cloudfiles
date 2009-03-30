@@ -118,6 +118,9 @@ class Command(BaseCommand):
             { 'local': local_base + 'js/pngfix.js',
               'remote': 'js/pngfix.js',
             },
+            { 'local': local_base + 'escher-sources/http___ajax.googleapis.com_ajax_libs_yui_2.7.0_build_reset-fonts-grids_reset-fonts-grids.css',
+              'remote': 'escher-sources/http___ajax.googleapis.com_ajax_libs_yui_2.7.0_build_reset-fonts-grids_reset-fonts-grids.css',
+            },
         )
         return filenames
 
