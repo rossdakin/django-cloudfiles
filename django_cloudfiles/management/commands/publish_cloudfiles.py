@@ -43,7 +43,7 @@ class Command(BaseCommand):
         for option in required:
             name = option['name']
             settings_attr = option['settings_attr']
-            if not options.get(name, None):
+            if options.get(name, None) == None:
                 try:
                     options[name] = getattr(settings, settings_attr)
                 except:
@@ -65,24 +65,30 @@ class Command(BaseCommand):
             print "failed"
             raise CommandError("Authentication failed for username '" +
                                username + "' and api_key '" + api_key + "'.")
-        except cloudfiles.errors.AuthenticationError:
+        except cloudfiles.errors.AuthenticationError, string:
             print "failed"
             raise CommandError("An unspecified authentication error has " +
-                               "occurred.")
+                               "occurred (" + string + ").")
+        except cloudfiles.errors.InvalidUrl, string:
+            print "failed"
+            raise CommandError("Could not connect (" + string + ")")
 
     def _get_container(self, conn, name, create=False):
         try:
             write("Getting container %s: " % name)
             container = conn.get_container(name)
             print "done"
-        except cloudfiles.errors.NoSuchContainer:
+        except cloudfiles.errors.InvalidContainerName, string:
+            print "failed"
+            raise CommandError("Invalid container name: '" + string + "'")
+        except cloudfiles.errors.NoSuchContainer, string:
             if create:
                 write("must create: ")
                 container = conn.create_container(name)
                 print "created"
             else:
                 print "failed"
-                raise CommandError("The container '" + name + "' does not " +
+                raise CommandError("The container '" + string + "' does not " +
                                    "exist. Please create this container, or " +
                                    "use the --create_container option to let " +
                                    "this script create it for you.")
@@ -127,12 +133,24 @@ class Command(BaseCommand):
     def _upload_file(self, container, remote_filename, local_filename):
         self.progress_bar = ProgressBar(total_ticks=73)
         self.progress_bar.start()
-        object = container.create_object(remote_filename)
         try:
+            object = container.create_object(remote_filename)
             object.load_from_filename(local_filename,
                                       callback=self.progress_bar.tick)
+        except IOError, (errno, string):
+            print ""
+            raise CommandError("Problem uploading file '" + local_filename +
+                               "': " + string + " (IOError " + str(errno) + ")")
         except cloudfiles.errors.IncompleteSend:
+            print ""
             raise CommandError("Incomplete send of file: " + local_filename)
+        except cloudfiles.errors.InvalidObjectName, string:
+            print ""
+            raise CommandError("Invalid object name: '" + string +
+                               "' (local file: '" + local_filename + "')")
+        except cloudfiles.errors.InvalidObjectSize:
+            print ""
+            raise CommandError("Invalid size for file: " + local_filename)
         self.progress_bar.end()
 
     def _upload_files(self, container, filenames):
