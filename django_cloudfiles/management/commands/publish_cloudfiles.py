@@ -3,8 +3,8 @@ import cloudfiles
 from optparse import make_option
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-from django_cloudfiles import (USERNAME_SETTINGS_ATTR, PUBLIC_URI_SETTINGS_ATTR,
-                               API_KEY_SETTINGS_ATTR, CONTAINER_SETTINGS_ATTR)
+from django_cloudfiles import (USERNAME_SETTINGS_ATTR, API_KEY_SETTINGS_ATTR,
+                               CONTAINER_SETTINGS_ATTR)
 from django_cloudfiles.utils.progress_bar import ProgressBar
 from django_cloudfiles.utils.writer import write
 
@@ -89,16 +89,34 @@ class Command(BaseCommand):
         return container
 
     def _get_filenames(self):
-        local_base = '/Users/Jenn/Desktop/test'
+        local_base = '/Users/Jenn/ross/WebDev/sites/myclasslibrary.com/public/media/'
         filenames = (
-            { 'local': local_base + '/smile.jpg',
-              'remote': 'pics/smile.png',
+            { 'local': local_base + 'css/base.css',
+              'remote': 'css/base.css',
             },
-            { 'local': local_base + '/frown.jpg',
-              'remote': 'pics/frown.jpg',
+            { 'local': local_base + 'images/48x48_bookcase.png',
+              'remote': 'images/48x48_bookcase.png',
             },
-            { 'local': local_base + '/cat.jpg',
-              'remote': 'pics/cat.jpg',
+            { 'local': local_base + 'images/64x64_bookcase.png',
+              'remote': 'images/64x64_bookcase.png',
+            },
+            { 'local': local_base + 'images/bookshelf.jpg',
+              'remote': 'images/bookshelf.jpg',
+            },
+            { 'local': local_base + 'images/favicon.png',
+              'remote': 'images/favicon.png',
+            },
+            { 'local': local_base + 'images/kampyle-en-blue-band-low-right.gif',
+              'remote': 'images/kampyle-en-blue-band-low-right.gif',
+            },
+            { 'local': local_base + 'images/logo.png',
+              'remote': 'images/logo.png',
+            },
+            { 'local': local_base + 'js/kampyle.js',
+              'remote': 'js/kampyle.js',
+            },
+            { 'local': local_base + 'js/pngfix.js',
+              'remote': 'js/pngfix.js',
             },
         )
         return filenames
@@ -143,10 +161,12 @@ class Command(BaseCommand):
         return False
 
     def _check_uri(self, container):
-        public_uri = container.public_uri()
-        if getattr(settings, PUBLIC_URI_SETTINGS_ATTR, None) != public_uri:
-            print ("In your settings.py file, be sure to set:\n  %s = '%s'" %
-                   (PUBLIC_URI_SETTINGS_ATTR, public_uri))
+        media_url = getattr(settings, 'MEDIA_URL', None)
+        public_uri = container.public_uri() + '/'
+        if media_url != public_uri:
+            print "In your settings.py file, be sure to set:"
+            print "    MEDIA_URL = '%s'" % public_uri
+            print "  (currently) = '%s'" % media_url
 
     def handle(self, *args, **options):
         try:

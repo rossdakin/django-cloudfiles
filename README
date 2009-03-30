@@ -32,23 +32,25 @@ Working proof of concept.
 Instalation
 -----------
 
-1) Download the CloudFiles Python API (project developed against 1.3.0):
+1. Download the CloudFiles Python API (project developed against 1.3.0):
    https://api.mosso.com/clients/cloudfiles/python-cloudfiles-1.3.0.zip
 
-2) Extract the API and put the contained folder cloudfiles/ in your PYTHONPATH.
+2. Extract the API and put the contained folder cloudfiles/ in your PYTHONPATH.
 
-3) Put django_cloudfiles/ in your PYTHONPATH.
+3. Put django_cloudfiles/ in your PYTHONPATH.
 
-4) Add django_cloudfiles to your INSTALLED_APPS
+4. Add django_cloudfiles to your INSTALLED_APPS
 
-5) Configure some settings in your settings file (these are optional; they can
+5. Configure some settings in your settings file (these are optional; they can
    be passed on the commad line to manage.py instead of coded in setings.py):
 
     * MOSSO_USERNAME - your Mosso username used for accessing CloudFiles
     * MOSSO_API_KEY - your Mosso API key used for accessing CloudFiles
     * CLOUDFILES_CONTAINER_NAME - the container to upload files to
-    * CLOUDFILES_PUBLIC_URI - the public URI of your container (only used if
-                              you use the CDN feature of CloudFiles)
+
+6. (optional) If you use the CDN feature of CloudFiles, set your MEDIA_URL
+   to be the public URI of your container. NOTE: It's useful to override this
+   in a settings_dev.py file if you develop offline locally.
 
 TODO
 ----
