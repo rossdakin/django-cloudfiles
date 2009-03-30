@@ -101,7 +101,7 @@ class Publisher(object):
 
 ###
 username = 'rossdakin'
-api_key = '********************************' # keep your api key private!
+api_key = '3c57975e74a9860c442cb4a5dd6487e8' # your api key private!
 container_name = 'myclasslibrary.com'
 local_base = '/Users/rdakin/Desktop/pics'
 filenames = (
