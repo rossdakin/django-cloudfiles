@@ -53,6 +53,9 @@ class Command(BaseCommand):
         Looks for required parameters in the settings file if they aren't given
         on the command line.
         """
+        # while we're at it, make verbosity an int
+        options['verbosity'] = int(options.get('verbosity', '1'))
+
         for option in required:
             name = option['name']
             settings_attr = option['settings_attr']
@@ -69,9 +72,10 @@ class Command(BaseCommand):
         container = conn.get_container(options['container_name'],
                                        options['create_container'])
         print "Uploading files from '%s':" % options['local_root']
-        count, bytes = Container.upload_tree(container, options['local_root'])
-        number, mnemonic = format_bytes(bytes)
-        print "Finished uploading %u files (%u %s)." % (count, number, mnemonic)
+        count, bytes = Container.upload_tree(container, options['local_root'],
+                                             verbosity=options['verbosity'])
+        size, mnemonic = format_bytes(bytes)
+        print "Finished uploading %u files (%u %s)." % (count, size, mnemonic)
         if Container.check_public(container, options['make_public']):
             Container.check_uri(container, getattr(settings, 'MEDIA_URL', None))
 

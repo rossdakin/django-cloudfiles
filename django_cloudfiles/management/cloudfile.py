@@ -8,16 +8,19 @@ class CloudFile(object):
     def __init__(self, local_path):
         self.local_path = local_path
 
-    def upload(self, container, remote_filename):
+    def upload(self, container, remote_filename, verbosity=1):
         size = os.path.getsize(self.local_path)
         number, mnemonic = format_bytes(size)
-        print "  %s (%u %s):" % (remote_filename, number, mnemonic)
-        self.progress_bar = ProgressBar(total_ticks=73)
-        self.progress_bar.start()
+        if verbosity > 0:
+            print "  %s (%u %s):" % (remote_filename, number, mnemonic)
+            self.progress_bar = ProgressBar(total_ticks=73)
+            self.progress_bar.start()
+            callback = self.progress_bar.tick
+        else:
+            callback = None
         try:
             object = container.create_object(remote_filename)
-            object.load_from_filename(self.local_path,
-                                      callback=self.progress_bar.tick)
+            object.load_from_filename(self.local_path, callback=callback)
         except IOError, (errno, string):
             print ""
             raise CommandError("Problem uploading file '" + self.local_path +
@@ -32,5 +35,6 @@ class CloudFile(object):
         except cloudfiles.errors.InvalidObjectSize:
             print ""
             raise CommandError("Invalid size for file: " + self.local_path)
-        self.progress_bar.end()
+        if verbosity > 0:
+            self.progress_bar.end()
         return size

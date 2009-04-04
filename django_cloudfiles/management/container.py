@@ -41,7 +41,8 @@ class Container(object):
             print "  (currently) = '%s'" % media_url
 
     @classmethod
-    def upload_tree(klass, container, tree_root, drop_remote_prefix=None):
+    def upload_tree(klass, container, tree_root, drop_remote_prefix=None,
+                    verbosity=1):
         """
         Upload a tree of files rooted at tree_root to a specified container,
         skipping any local paths that match a pattern in IGNORE_PATTERNS_FLAGS.
@@ -63,24 +64,29 @@ class Container(object):
             drop_remote_prefix = tree_root
         for root, dirs, files in os.walk(tree_root):
             if is_ignored_path(root):
+                if verbosity > 1:
+                    print "  SKIPPING: %s" % root
                 continue
             for filename in files:
                 path = os.path.join(root, filename)
                 if is_ignored_path(path):
+                    if verbosity > 1:
+                        print "  SKIPPING: %s" % path
                     continue
                 count += 1
                 remote_filename = path[len(drop_remote_prefix)+1:]
                 if os.sep != URL_SEPERATOR:
                     remote_filename.replace(os.sep, URL_SEPERATOR)
                 cf = CloudFile(path)
-                bytes += cf.upload(container, remote_filename)
+                bytes += cf.upload(container, remote_filename, verbosity)
             # os.walk doesn't follow linked subdirectories (potential infinite
             # loop) before Python 2.6, so we recurse over them manually:
             for dir in dirs:
                 path = os.path.join(root, dir)
                 if os.path.islink(path):
                     stats = klass.upload_tree(container, path,
-                                              drop_remote_prefix)
+                                              drop_remote_prefix,
+                                              verbosity=verbosity)
                     count += stats[0]
                     bytes += stats[1]
         return count, bytes
