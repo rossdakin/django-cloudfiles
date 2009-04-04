@@ -5,29 +5,15 @@ Summary
 
 Mosso, the shared hosting provider owned by Rackspace, offers a new file
 storage service called CloudFiles. Bundled with CloudFiles is the option to
-make your files publicly available over Limelight's CDN. This is very cool!
+make your files publicly available over Limelight's CDN.
 
-However, there are some downsides. Currently my biggest gripes are:
- 1. no control over headers (namely Expires, which is set at 8 hours)
- 2. no gzip
- 3. no HTTPS
- 4. no hierarchies; you can divide content into "containers", but they're only
-    one level deep (a flat hierarchy), which doesn't map well to the typical
-    media/{css,js,img,swf} style organization that most devs seems to follow.
-
-This app will try to provide a solution to gripe #4 by:
- * allowing you to keep your existing media structure
- * translating your media structure into unique file names
-   (e.g. media/images/logo.png becomes media_images_logo.png or similar)
-   and uploading it to CloudFiles via their Python API
- * providing a template tag (or some other facility) for translating your media
-   file names into the CloudFiles file names in templates
- * providing a manage.py command for easily publishing your media to CloudFiles
+This app adds a command (publish_cloudfiles) to the manage.py script. The new
+command publishes all of your media files to your CloudFiles account.
 
 Maturity
 --------
 
-Working proof of concept.
+Working alpha. Needs to be beat up. Needs testing on Windows.
 
 Instalation
 -----------
@@ -47,14 +33,20 @@ Instalation
     * MOSSO_USERNAME - your Mosso username used for accessing CloudFiles
     * MOSSO_API_KEY - your Mosso API key used for accessing CloudFiles
     * CLOUDFILES_CONTAINER_NAME - the container to upload files to
+    * MEDIA_ROOT - where the command should upload from
 
 6. (optional) If you use the CDN feature of CloudFiles, set your MEDIA_URL
    to be the public URI of your container. NOTE: It's useful to override this
    in a settings_dev.py file if you develop offline locally.
 
+Use
+---
+
+python manage.py help publish_cloudfiles
+
 TODO
 ----
 
-replace dummy files with some real hierarchy-parsing logic
-some reporting on how long each file took to upload
-object.etag configuration
+ * Some reporting on how long each file took to upload.
+ * Publish the last modified timestamp with each file as meta data, and
+   create an option to only publish those with more current mod times.

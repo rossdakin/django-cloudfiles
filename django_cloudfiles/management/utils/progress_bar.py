@@ -1,4 +1,4 @@
-from .writer import write
+from .string import write
 
 TOTAL_TICKS = 76
 BEGIN_CHAR = '['
