@@ -40,8 +40,8 @@ class Container(object):
             print "    MEDIA_URL = '%s'" % public_uri
             print "  (currently) = '%s'" % media_url
 
-    @staticmethod
-    def upload_tree(container, tree_root, drop_remote_prefix=None):
+    @classmethod
+    def upload_tree(klass, container, tree_root, drop_remote_prefix=None):
         """
         Upload a tree of files rooted at tree_root to a specified container,
         skipping any local paths that match a pattern in IGNORE_PATTERNS_FLAGS.
@@ -50,7 +50,7 @@ class Container(object):
         Remote file names are the local file names with seperator changed to
         URL_SEPERATOR and the tree_root dropped from the beginning.
 
-        Returns the number of files uploaded.        
+        Returns the number of files uploaded and total bytes transfered (tuple).
         """
         count = 0
         bytes = 0
@@ -79,7 +79,8 @@ class Container(object):
             for dir in dirs:
                 path = os.path.join(root, dir)
                 if os.path.islink(path):
-                    stats = upload_tree(container, path, drop_remote_prefix)
+                    stats = klass.upload_tree(container, path,
+                                              drop_remote_prefix)
                     count += stats[0]
                     bytes += stats[1]
         return count, bytes
