@@ -53,9 +53,7 @@ class CloudFile(object):
             callback = self.progress_bar.tick
         else:
             callback = None
-
         try:
-            self.set_mod_hash(self.generate_mod_hash())
             self.object.load_from_filename(self.local_path, callback=callback)
         except IOError, (errno, string):
             print ""
@@ -67,8 +65,9 @@ class CloudFile(object):
         except cloudfiles.errors.InvalidObjectSize:
             print ""
             raise CommandError("Invalid size for file: " + self.local_path)
-
         if verbosity > 0:
             self.progress_bar.end()
+
+        self.set_mod_hash(self.generate_mod_hash())
 
         return self.get_local_size()
