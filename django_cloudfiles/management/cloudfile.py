@@ -9,10 +9,9 @@ class CloudFile(object):
         self.local_path = local_path
 
     def upload(self, container, remote_filename, verbosity=1):
-        size = os.path.getsize(self.local_path)
-        number, mnemonic = format_bytes(size)
+        bytes = os.path.getsize(self.local_path)
         if verbosity > 0:
-            print "  %s (%u %s):" % (remote_filename, number, mnemonic)
+            print "  %s (%s):" % (remote_filename, format_bytes(bytes))
             self.progress_bar = ProgressBar(total_ticks=73)
             self.progress_bar.start()
             callback = self.progress_bar.tick
@@ -37,4 +36,4 @@ class CloudFile(object):
             raise CommandError("Invalid size for file: " + self.local_path)
         if verbosity > 0:
             self.progress_bar.end()
-        return size
+        return bytes

@@ -1,4 +1,5 @@
 import socket
+import time
 import cloudfiles
 from optparse import make_option
 from django.conf import settings
@@ -9,8 +10,8 @@ from django_cloudfiles import (USERNAME_SETTINGS_ATTR, API_KEY_SETTINGS_ATTR,
 from django_cloudfiles.management.cloudfile import CloudFile
 from django_cloudfiles.management.connection import Connection
 from django_cloudfiles.management.container import Container
-from django_cloudfiles.management.utils.string import write, format_bytes
-
+from django_cloudfiles.management.utils.string import (write, format_bytes,
+                                                       format_secs)
 REQUIRED_OPTIONS = (
     {'name': 'username',
      'settings_attr': USERNAME_SETTINGS_ATTR},
@@ -68,14 +69,20 @@ class Command(BaseCommand):
                                        settings_attr + " in your settings file")
 
     def _handle(self, *args, **options):
+        local_root = options['local_root']
+        verbosity=options['verbosity']
+
         conn = Connection(options['username'], options['api_key'])
         container = conn.get_container(options['container_name'],
                                        options['create_container'])
-        print "Uploading files from '%s':" % options['local_root']
-        count, bytes = Container.upload_tree(container, options['local_root'],
-                                             verbosity=options['verbosity'])
-        size, mnemonic = format_bytes(bytes)
-        print "Finished uploading %u files (%u %s)." % (count, size, mnemonic)
+
+        print "Uploading files from '%s':" % local_root
+        start_time = time.time()
+        count, bytes = Container.upload_tree(container, local_root,
+                                             verbosity=verbosity)
+        stats = count, format_bytes(bytes), format_secs(time.time()-start_time)
+        print "Finished uploading %u files (%s) in %s." % stats
+
         if Container.check_public(container, options['make_public']):
             Container.check_uri(container, getattr(settings, 'MEDIA_URL', None))
 
