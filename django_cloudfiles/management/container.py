@@ -41,8 +41,8 @@ class Container(object):
             print "  (currently) = '%s'" % media_url
 
     @classmethod
-    def upload_tree(klass, container, tree_root, drop_remote_prefix=None,
-                    verbosity=1):
+    def upload_tree(klass, container, tree_root, force=False,
+                    drop_remote_prefix=None, verbosity=1):
         """
         Upload a tree of files rooted at tree_root to a specified container,
         skipping any local paths that match a pattern in IGNORE_PATTERNS_FLAGS.
@@ -55,38 +55,58 @@ class Container(object):
         """
         count = 0
         bytes = 0
+
+        # clean up given path
         tree_root = os.path.abspath(tree_root)
         tree_root = os.path.normpath(tree_root)
+
+        # make sure tree root exists and is a directory
         if not (os.path.exists(tree_root) and
                 os.path.isdir(tree_root)):
             raise CommandError("Not a valid directory: " + tree_root)
+
+        # no drop-prefix set yet; defalt to the tree root
         if not drop_remote_prefix:
             drop_remote_prefix = tree_root
+
+        # walk the tree, skipping ignored directories
         for root, dirs, files in os.walk(tree_root):
             if is_ignored_path(root):
                 if verbosity > 1:
-                    print "  SKIPPING: %s" % root
+                    print "  IGNORING: %s" % root
                 continue
+
+            # loop over files in this directory
             for filename in files:
                 path = os.path.join(root, filename)
+
+                # ignored file: skip
                 if is_ignored_path(path):
                     if verbosity > 1:
-                        print "  SKIPPING: %s" % path
+                        print "  IGNORING: %s" % path
                     continue
-                count += 1
+
+                # set remote filename
                 remote_filename = path[len(drop_remote_prefix)+1:]
                 if os.sep != URL_SEPERATOR:
                     remote_filename.replace(os.sep, URL_SEPERATOR)
-                cf = CloudFile(path)
-                bytes += cf.upload(container, remote_filename, verbosity)
+
+                # uplaod file if it has changed (or we force it)
+                cf = CloudFile(container, remote_filename, path)
+                if force or cf.has_changed():
+                    bytes += cf.upload(verbosity)
+                    count += 1
+                elif verbosity > 1:
+                    print "  SKIPPING: %s" % path
+
             # os.walk doesn't follow linked subdirectories (potential infinite
             # loop) before Python 2.6, so we recurse over them manually:
             for dir in dirs:
                 path = os.path.join(root, dir)
                 if os.path.islink(path):
-                    stats = klass.upload_tree(container, path,
-                                              drop_remote_prefix,
-                                              verbosity=verbosity)
+                    stats = klass.upload_tree(container, path, force,
+                                              drop_remote_prefix, verbosity)
                     count += stats[0]
                     bytes += stats[1]
+
         return count, bytes

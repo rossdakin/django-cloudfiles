@@ -18,8 +18,9 @@ DECIMAL_ORDERS = (
 )
 def format_bytes(bytes):
     for order, mnemonic in DECIMAL_ORDERS:
-        if bytes > order:
+        if bytes >= order:
             return "%u %s" % (bytes // order, mnemonic)
+    return "%u %s" % (bytes, DECIMAL_ORDERS[-1][1])
 
 SECS_IN_MIN = 60
 MINS_IN_HOUR = 60

@@ -43,9 +43,3 @@ Use
 ---
 
 python manage.py help publish_cloudfiles
-
-TODO
-----
-
- * Publish the last modified timestamp with each file as meta data, and
-   create an option to only publish those with more current mod times.

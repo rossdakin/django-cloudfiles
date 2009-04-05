@@ -46,6 +46,9 @@ class Command(BaseCommand):
         make_option('-p', '--make-public', action="store_true",
                     dest="make_public", default=False,
                     help="Make the container public if it's not already"),
+        make_option('-f', '--force', action="store_true", dest="force",
+                    default=False, help="Upload files even if they haven't " +
+                    "been modified since the last uplaod."),
     )
     requires_model_validation = False
 
@@ -69,17 +72,15 @@ class Command(BaseCommand):
                                        settings_attr + " in your settings file")
 
     def _handle(self, *args, **options):
-        local_root = options['local_root']
-        verbosity=options['verbosity']
-
         conn = Connection(options['username'], options['api_key'])
         container = conn.get_container(options['container_name'],
                                        options['create_container'])
 
-        print "Uploading files from '%s':" % local_root
+        print "Uploading files from '%s':" % options['local_root']
         start_time = time.time()
-        count, bytes = Container.upload_tree(container, local_root,
-                                             verbosity=verbosity)
+        count, bytes = Container.upload_tree(container, options['local_root'],
+                                             force=options['force'],
+                                             verbosity=options['verbosity'])
         stats = count, format_bytes(bytes), format_secs(time.time()-start_time)
         print "Finished uploading %u files (%s) in %s." % stats
 
