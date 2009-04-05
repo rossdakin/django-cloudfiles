@@ -26,7 +26,6 @@ class CloudFile(object):
     def generate_mod_hash(self):
         if getattr(self, "_cached_mod_hash", None):
             return self._cached_mod_hash
-
         hash_input = (self.remote_filename + str(self.get_local_size()) +
                       self.local_path + str(os.stat(self.local_path).st_mtime))
         self._cached_mod_hash = sha.new(hash_input).hexdigest()
