@@ -3,12 +3,12 @@ django-cloudfiles
 Summary
 -------
 
-Mosso, the shared hosting provider owned by Rackspace, offers a new file
-storage service called CloudFiles. Bundled with CloudFiles is the option to
-make your files publicly available over Limelight's CDN.
+The Rackspace Cloud (previously Mosso) offers a file storage service called
+CloudFiles. Bundled with CloudFiles is the option to make your files publicly
+available over Limelight's CDN.
 
-This app adds a command (publish_cloudfiles) to the manage.py script. The new
-command publishes all of your media files to your CloudFiles account.
+This app adds a command (publish_cloudfiles) to Django's manage.py script. The
+new command publishes all of your media files to your CloudFiles account.
 
 Maturity
 --------
