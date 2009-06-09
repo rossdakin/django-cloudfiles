@@ -9,7 +9,7 @@ from django_cloudfiles import (USERNAME_SETTINGS_ATTR, API_KEY_SETTINGS_ATTR,
                                LOCAL_FILES_ROOT_SETTINGS_ATTR)
 from django_cloudfiles.management.cloudfile import CloudFile
 from django_cloudfiles.management.connection import Connection
-from django_cloudfiles.management.container import Container
+import django_cloudfiles.management.container as Container
 from django_cloudfiles.management.utils.string import (write, format_bytes,
                                                        format_secs)
 REQUIRED_OPTIONS = (

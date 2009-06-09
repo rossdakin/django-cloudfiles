@@ -1,7 +1,6 @@
 import socket
 import cloudfiles
 from django.core.management.base import CommandError
-from django_cloudfiles.management.container import Container
 from django_cloudfiles.management.utils.string import write
 
 class Connection(cloudfiles.Connection):
