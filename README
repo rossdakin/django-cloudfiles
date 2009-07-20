@@ -30,9 +30,9 @@ Instalation
 5. Configure some settings in your settings file (these are optional; they can
    be passed on the commad line to manage.py instead of coded in setings.py):
 
-    * MOSSO_USERNAME - your Mosso username used for accessing CloudFiles
-    * MOSSO_API_KEY - your Mosso API key used for accessing CloudFiles
-    * CLOUDFILES_CONTAINER_NAME - the container to upload files to
+    * CLOUDFILES_USERNAME - your Mosso username used for accessing CloudFiles
+    * CLOUDFILES_API_KEY - your Mosso API key used for accessing CloudFiles
+    * CLOUDFILES_CONTAINER - the container to upload files to
     * MEDIA_ROOT - where the command should upload from
 
 6. (optional) If you use the CDN feature of CloudFiles, set your MEDIA_URL
