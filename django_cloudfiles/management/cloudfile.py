@@ -5,7 +5,7 @@ from django.core.management.base import CommandError
 from django_cloudfiles.management.utils.progress_bar import ProgressBar
 from django_cloudfiles.management.utils.string import format_bytes
 
-MOD_HASH_NAME = 'django_cloudfiles_modified_hash'
+MOD_HASH_NAME = 'django-cloudfiles-modified-hash'
 
 class CloudFile(object):
     def __init__(self, container, remote_filename, local_path):
