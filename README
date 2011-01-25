@@ -15,6 +15,9 @@ Maturity
 
 Working alpha. Needs to be beat up. Needs testing on Windows.
 
+NOTE: No investigation has been made into whether or not this will continue to
+      work after RackSpace moves from Limelight to Akami: http://bit.ly/g1x7N6
+
 Instalation
 -----------
 
