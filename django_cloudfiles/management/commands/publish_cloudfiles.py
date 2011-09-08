@@ -104,6 +104,6 @@ class Command(BaseCommand):
         except socket.timeout, e:
             print ""
             raise CommandError("Socket timeout: " + str(e))
-        except socket.error, (errno, e):
+        except socket.error, e:
             print ""
-            raise CommandError("Socket error " + str(errno) + ": " + str(e))
+            raise CommandError("Socket error " + str(e))
